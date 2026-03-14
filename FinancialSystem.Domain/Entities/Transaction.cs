@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FinancialSystem.Domain.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,13 @@ using System.Threading.Tasks;
 
 namespace FinancialSystem.Domain.Entities
 {
-    internal class Transaction
+    public  class Transaction : Entity
     {
+        public int FromAccountId { get; set; }
+        public int ToAccountId { get; set; }
+
+        public decimal Amount {  get; set; }
+
+        public string Status { get; set; } = "Completed";
     }
 }

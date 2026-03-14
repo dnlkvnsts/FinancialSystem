@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinancialSystem.Domain.Events
+namespace FinancialSystem.Domain.Exceptions
 {
     public class DomainException : Exception
     {

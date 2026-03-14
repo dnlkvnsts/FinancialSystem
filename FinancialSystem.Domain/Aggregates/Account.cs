@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using FinancialSystem.Domain.Exceptions;
 using FinancialSystem.Domain.Events;
-using FinancialSystem.Domain.Events;
+
 
 namespace FinancialSystem.Domain.Aggregates
 {
@@ -35,7 +36,13 @@ namespace FinancialSystem.Domain.Aggregates
 
             Balance -= amount;
 
-            AddDomainEvent(new MoneyTransferredEvent(Id, amount));
+            AddDomainEvent(new MoneyTransferredEvent(Id, amount.Amount));
+        }
+
+        public void Block(string reason)
+        {
+            IsBlocked = true;
+            AddDomainEvent(new AccountBlockedEvent(Id, reason));
         }
 
 

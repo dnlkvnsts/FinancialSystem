@@ -1,6 +1,6 @@
 ﻿
 using FinancialSystem.Domain.Common;
-using FinancialSystem.Domain.Events;
+using FinancialSystem.Domain.Exceptions;
 
 namespace FinancialSystem.Domain.ValueObjects
 {
