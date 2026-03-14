@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace FinancialSystem.Domain.Events
 {
-    public class DomainException : Exception
+    internal class AccountBlockedEvent
     {
-        public DomainException(string message) : base(message) { }
     }
 }
