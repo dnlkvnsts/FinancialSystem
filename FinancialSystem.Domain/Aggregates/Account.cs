@@ -20,7 +20,7 @@ namespace FinancialSystem.Domain.Aggregates
         public int OwnerId { get; private set; }
 
 
-
+        private Account() { }
         public Account(string number, Money initialBalance, int ownerId)
         {
             Number = number;

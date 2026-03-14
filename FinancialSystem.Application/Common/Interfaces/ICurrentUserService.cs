@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace FinancialSystem.Application.Common.Interfaces
 {
-    internal class ICurrentUserService
+    public interface ICurrentUserService
     {
+        // ID текущего пользователя (может быть null, если не вошел)
+        string? UserId { get; }
+
+        // Роль: "Client", "Manager", "Admin"
+        string? Role { get; }
+
+        bool IsAuthenticated { get; }
     }
 }

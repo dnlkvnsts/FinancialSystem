@@ -6,7 +6,20 @@ using System.Threading.Tasks;
 
 namespace FinancialSystem.Application.Common.Exceptions
 {
-    internal class ValidationException
+    public class ValidationException : Exception
     {
+        public ValidationException()
+            : base("Произошла одна или несколько ошибок валидации.")
+        {
+            Errors = new Dictionary<string, string[]>();
+        }
+
+        public ValidationException(IReadOnlyDictionary<string, string[]> errors)
+            : base("Произошла одна или несколько ошибок валидации.")
+        {
+            Errors = errors;
+        }
+
+        public IReadOnlyDictionary<string, string[]> Errors { get; }
     }
 }

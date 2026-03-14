@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace FinancialSystem.Application.Common.Interfaces
 {
-    internal class IDateTime
+    public interface IDateTime
     {
+        // Текущее время системы
+        DateTime Now { get; }
     }
 }

@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace FinancialSystem.Application.Common.Exceptions
 {
-    internal class InsufficientFundsException
+    public class InsufficientFundsException : Exception
     {
+        public InsufficientFundsException(int accountId)
+            : base($"На счету с ID {accountId} недостаточно средств для выполнения операции.")
+        {
+        }
     }
 }

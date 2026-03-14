@@ -9,6 +9,8 @@ namespace FinancialSystem.Domain.ValueObjects
         public  string Currency {  get; }
         public decimal Amount { get; }
 
+        private Money() { }
+
         public Money(string currency, decimal amount)
         {
             if (amount < 0) throw new DomainException("Сумма не может быть отрицательной");
