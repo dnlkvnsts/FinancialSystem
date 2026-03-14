@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinancialSystem.Domain.Enums
+namespace FinancialSystem.Domain.ValueObjects
 {
-    public enum RoleType { Client, Manager, Administrator }
+    internal class Money
+    {
+    }
 }

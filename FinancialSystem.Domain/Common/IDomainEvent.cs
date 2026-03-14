@@ -6,5 +6,8 @@ using System.Threading.Tasks;
 
 namespace FinancialSystem.Domain.Common;
 
-     public  interface IDomainEvent { }
+public interface IDomainEvent
+{
+    DateTime OccurredOn { get; }
+}
 

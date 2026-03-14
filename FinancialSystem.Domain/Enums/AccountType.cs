@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace FinancialSystem.Domain.Enums
 {
-    internal class AccountType
-    {
-    }
+    public enum AccountType { Debit, Credit, Savings }
+ 
 }
