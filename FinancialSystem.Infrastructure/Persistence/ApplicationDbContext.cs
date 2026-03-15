@@ -82,6 +82,29 @@ namespace FinancialSystem.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            // 1. Настройка для Transaction (исправляет твою ошибку)
+            builder.Entity<Transaction>(entity =>
+            {
+                // Указываем, что Amount — это часть таблицы Transaction
+                entity.OwnsOne(t => t.Amount, money =>
+                {
+                    money.Property(m => m.Amount).HasColumnName("Amount").HasPrecision(18, 2);
+                    money.Property(m => m.Currency).HasColumnName("Currency").HasMaxLength(3);
+                });
+            });
+
+            // 2. Настройка для Account (так как там тоже есть Money)
+            builder.Entity<Account>(entity =>
+            {
+                entity.OwnsOne(a => a.Balance, money =>
+                {
+                    money.Property(m => m.Amount).HasColumnName("BalanceAmount").HasPrecision(18, 2);
+                    money.Property(m => m.Currency).HasColumnName("BalanceCurrency").HasMaxLength(3);
+                });
+            });
+
+            // Оставляем эту строку на случай, если в будущем захочешь использовать файлы
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

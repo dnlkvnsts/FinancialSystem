@@ -1,5 +1,6 @@
 ﻿using FinancialSystem.Application.DTOs;
-using FinancialSystem.Application.Features.Accounts.Commands.CreateAccount;
+using FinancialSystem.Application.Features.Accounts.Commands.CloseAccount;
+using FinancialSystem.Application.Features.Accounts.Commands.OpenAccount;
 using FinancialSystem.Application.Features.Accounts.Queries.GetAccountById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,16 +15,25 @@ namespace FinancialSystem.Api.Controllers
 
         public AccountsController(IMediator mediator) => _mediator = mediator;
 
-        [HttpPost]
-        public async Task<ActionResult<int>> Create(CreateAccountCommand command)
-        {
-            return await _mediator.Send(command);
-        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<AccountDto>> Get(int id)
         {
             return await _mediator.Send(new GetAccountByIdQuery(id));
+        }
+
+        [HttpPost("open")]
+        public async Task<ActionResult<int>> OpenAccount([FromBody] OpenAccountCommand command)
+        {
+            var accountId = await _mediator.Send(command);
+            return Ok(accountId);
+        }
+
+        [HttpDelete("{id}")] // Обычно закрытие/удаление делают через DELETE
+        public async Task<ActionResult> CloseAccount(int id)
+        {
+            await _mediator.Send(new CloseAccountCommand(id));
+            return NoContent(); // Возвращаем 204 (успешно, без контента)
         }
     }
 }
