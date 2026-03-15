@@ -34,7 +34,8 @@ namespace FinancialSystem.Application.Features.Accounts.Commands.OpenAccount
                 newAccountNumber,
                 initialBalance,
                 request.OwnerId,
-                request.BankId
+                request.BankId,
+                request.Type
             );
 
             // 4. Добавляем в репозиторий и сохраняем

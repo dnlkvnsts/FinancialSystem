@@ -1,4 +1,5 @@
-﻿using FinancialSystem.Domain.Common;
+﻿using FinancialSystem.Domain.Aggregates;
+using FinancialSystem.Domain.Common;
 using FinancialSystem.Domain.Enums;
 using FinancialSystem.Domain.ValueObjects;
 using System;
@@ -11,14 +12,16 @@ namespace FinancialSystem.Domain.Entities
 {
     public class Transaction : Entity
     {
-        public int? FromAccountId { get; private set; } // int? (может быть null, если это внешнее пополнение)
+        public int? FromAccountId { get; private set; }
         public int? ToAccountId { get; private set; }
 
-        // Используем Money для консистентности с Account
-        public Money Amount { get; private set; }
+        // === ДОБАВЬ ЭТИ ДВЕ СТРОКИ ЗДЕСЬ ===
+        public virtual Account FromAccount { get; private set; } // Навигационное свойство
+        public virtual Account ToAccount { get; private set; }   // Навигационное свойство
+                                                                 // ==================================
 
-        public DateTime CreatedAt { get; private set; }
-        public TransactionType Type { get; private set; } // Перевод, Зарплата, Проценты и т.д.
+        public Money Amount { get; private set; }
+        public TransactionType Type { get; private set; }
         public string Description { get; private set; }
 
         private Transaction() { } // Для EF
@@ -30,7 +33,6 @@ namespace FinancialSystem.Domain.Entities
             Amount = amount;
             Type = type;
             Description = description;
-            CreatedAt = DateTime.UtcNow; // Фиксируем время создания
         }
     }
 }

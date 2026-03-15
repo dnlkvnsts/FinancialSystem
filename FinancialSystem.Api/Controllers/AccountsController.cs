@@ -1,7 +1,9 @@
 ﻿using FinancialSystem.Application.DTOs;
 using FinancialSystem.Application.Features.Accounts.Commands.CloseAccount;
 using FinancialSystem.Application.Features.Accounts.Commands.OpenAccount;
+using FinancialSystem.Application.Features.Accounts.Commands.TransferFunds;
 using FinancialSystem.Application.Features.Accounts.Queries.GetAccountById;
+using FinancialSystem.Application.Features.Accounts.Queries.GetAccountHistory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,6 +36,25 @@ namespace FinancialSystem.Api.Controllers
         {
             await _mediator.Send(new CloseAccountCommand(id));
             return NoContent(); // Возвращаем 204 (успешно, без контента)
+        }
+
+        [HttpPost("transfer")]
+        public async Task<ActionResult<TransferResponseDto>> Transfer([FromBody] TransferFundsCommand command)
+        {
+           
+                // Отправляем команду в MediatR, он сам найдет нужный Handler
+                var result = await _mediator.Send(command);
+
+                // Возвращаем результат клиенту
+                return Ok(result);
+           
+        }
+
+        [HttpGet("{id}/history")]
+        public async Task<ActionResult<List<TransactionDto>>> GetHistory(int id)
+        {
+            var history = await _mediator.Send(new GetAccountHistoryQuery(id));
+            return Ok(history);
         }
     }
 }

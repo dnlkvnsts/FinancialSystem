@@ -4,6 +4,7 @@ using FinancialSystem.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinancialSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260315171037_AddNewMethod")]
+    partial class AddNewMethod
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,10 +174,6 @@ namespace FinancialSystem.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FromAccountId");
-
-                    b.HasIndex("ToAccountId");
-
                     b.ToTable("Transactions");
                 });
 
@@ -210,14 +209,6 @@ namespace FinancialSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("FinancialSystem.Domain.Entities.Transaction", b =>
                 {
-                    b.HasOne("FinancialSystem.Domain.Aggregates.Account", "FromAccount")
-                        .WithMany()
-                        .HasForeignKey("FromAccountId");
-
-                    b.HasOne("FinancialSystem.Domain.Aggregates.Account", "ToAccount")
-                        .WithMany()
-                        .HasForeignKey("ToAccountId");
-
                     b.OwnsOne("FinancialSystem.Domain.ValueObjects.Money", "Amount", b1 =>
                         {
                             b1.Property<int>("TransactionId")
@@ -244,10 +235,6 @@ namespace FinancialSystem.Infrastructure.Migrations
 
                     b.Navigation("Amount")
                         .IsRequired();
-
-                    b.Navigation("FromAccount");
-
-                    b.Navigation("ToAccount");
                 });
 #pragma warning restore 612, 618
         }
