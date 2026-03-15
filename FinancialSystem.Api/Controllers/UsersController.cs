@@ -1,5 +1,7 @@
-﻿using FinancialSystem.Application.Features.Users.Commands.ConfirmClient;
+﻿using FinancialSystem.Application.DTOs;
+using FinancialSystem.Application.Features.Users.Commands.ConfirmClient;
 using FinancialSystem.Application.Features.Users.Commands.RegisterClient;
+using FinancialSystem.Application.Features.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +38,16 @@ namespace FinancialSystem.Api.Controllers
 
             // Возвращаем статус 200 OK, так как метод возвращает Unit (ничего)
             return Ok();
+        }
+
+
+        [HttpGet("unconfirmed")]
+        [Authorize(Roles = "Manager")] // ТОЛЬКО для менеджеров
+        public async Task<ActionResult<List<UnconfirmedUserDto>>> GetUnconfirmed()
+        {
+            var query = new GetUnconfirmedUsersQuery();
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }

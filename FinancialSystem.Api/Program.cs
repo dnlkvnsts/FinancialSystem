@@ -1,5 +1,6 @@
 using FinancialSystem.Application;
 using FinancialSystem.Infrastructure;
+using FinancialSystem.Infrastructure.Persistence;
 using Microsoft.OpenApi.Models;
 
 
@@ -70,5 +71,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
+    await initializer.SeedAsync();
+}
 
 app.Run();
