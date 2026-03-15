@@ -12,8 +12,11 @@ namespace FinancialSystem.Application.Features.Accounts.Commands.OpenAccount
     {
         public int BankId { get; init; }      // В каком банке открываем
         public string Currency { get; init; } // "BYN", "USD", "RUB"
-        public int OwnerId { get; init; }    // Кто владелец (твой ID пользователя)
+        public int OwnerId { get; init; }     // Кто владелец
 
-        public AccountType Type { get; set; }
+        
+        public AccountType Type { get; init; }
+
+        public decimal InterestRate { get; init; } = 0;
     }
 }

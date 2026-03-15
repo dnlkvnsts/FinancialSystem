@@ -1,12 +1,9 @@
 ﻿using FinancialSystem.Application.Common.Interfaces;
 using FinancialSystem.Domain.Aggregates;
+using FinancialSystem.Domain.Enums;
 using FinancialSystem.Domain.ValueObjects;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace FinancialSystem.Application.Features.Accounts.Commands.OpenAccount
 {
@@ -23,6 +20,17 @@ namespace FinancialSystem.Application.Features.Accounts.Commands.OpenAccount
 
         public async Task<int> Handle(OpenAccountCommand request, CancellationToken cancellationToken)
         {
+
+            if (request.Type == AccountType.Savings && request.InterestRate <= 0)
+            {
+                throw new Exception("Для открытия вклада процентная ставка должна быть больше 0.");
+            }
+
+
+            if (request.Type == AccountType.Debit && request.InterestRate > 0)
+            {
+                throw new Exception("У обычного счета (Debit) не может быть процентной ставки.");
+            }
             // 1. Генерируем уникальный номер счета (бизнес-логика)
             string newAccountNumber = "BY" + Guid.NewGuid().ToString().Substring(0, 10).ToUpper();
 
@@ -35,7 +43,8 @@ namespace FinancialSystem.Application.Features.Accounts.Commands.OpenAccount
                 initialBalance,
                 request.OwnerId,
                 request.BankId,
-                request.Type
+                request.Type,
+                 request.InterestRate
             );
 
             // 4. Добавляем в репозиторий и сохраняем

@@ -1,4 +1,5 @@
 ﻿using FinancialSystem.Application.DTOs;
+using FinancialSystem.Application.Features.Accounts.Commands.AccrueInterest;
 using FinancialSystem.Application.Features.Accounts.Commands.CloseAccount;
 using FinancialSystem.Application.Features.Accounts.Commands.OpenAccount;
 using FinancialSystem.Application.Features.Accounts.Commands.TransferFunds;
@@ -56,5 +57,16 @@ namespace FinancialSystem.Api.Controllers
             var history = await _mediator.Send(new GetAccountHistoryQuery(id));
             return Ok(history);
         }
+
+        [HttpPost("{id}/accrue-interest")]
+        public async Task<IActionResult> AccrueInterest(int id)
+        {
+            // Мы передаем ID из URL в нашу команду
+            await _mediator.Send(new AccrueInterestCommand(id));
+
+            return Ok(new { message = "Проценты успешно начислены на вклад" });
+        }
+
+
     }
 }

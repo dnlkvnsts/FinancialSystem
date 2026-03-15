@@ -8,9 +8,8 @@ namespace FinancialSystem.Domain.Enums
 {
     public enum AccountType 
     { 
-        Debit,
-        Credit,
-        Savings 
+        Debit = 1,
+        Savings = 2
     }
  
 }

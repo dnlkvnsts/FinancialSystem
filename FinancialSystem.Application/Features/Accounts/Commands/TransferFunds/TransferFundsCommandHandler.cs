@@ -27,6 +27,11 @@ namespace FinancialSystem.Application.Features.Accounts.Commands.TransferFunds
 
         public async Task<TransferResponseDto> Handle(TransferFundsCommand request, CancellationToken cancellationToken)
         {
+
+            if (request.FromAccountId == request.ToAccountId)
+            {
+                throw new DomainException("Нельзя перевести деньги самому себе на тот же счет");
+            }
             // 1. Поиск счетов
             var fromAccount = await _accountRepository.GetByIdAsync(request.FromAccountId);
             var toAccount = await _accountRepository.GetByIdAsync(request.ToAccountId);

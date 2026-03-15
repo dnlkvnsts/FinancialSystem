@@ -12,6 +12,6 @@ namespace FinancialSystem.Domain.Enums
         Salary,        // Зарплата от предприятия
         DepositInterest, // Проценты по вкладу
         Withdrawal,    // Снятие
-        Refill         // Пополнение
+        Interest
     }
 }

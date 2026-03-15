@@ -26,7 +26,10 @@ namespace FinancialSystem.Infrastructure.Persistence
         public DbSet<User> Users => Set<User>();
         public DbSet<Bank> Banks => Set<Bank>();
         public DbSet<Transaction> Transactions => Set<Transaction>();
+        public DbSet<Enterprise> Enterprises  => Set<Enterprise>();
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+
+       
 
         // РЕАЛИЗАЦИЯ IUnitOfWork (Управление транзакциями)
         public async Task BeginTransactionAsync()

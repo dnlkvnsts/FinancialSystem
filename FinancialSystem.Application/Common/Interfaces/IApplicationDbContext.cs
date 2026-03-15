@@ -19,6 +19,8 @@ namespace FinancialSystem.Application.Common.Interfaces
       
         DbSet<AuditLog> AuditLogs { get; } // Для требований Админа
 
+        DbSet<Enterprise> Enterprises { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
