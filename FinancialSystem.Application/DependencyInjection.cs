@@ -23,6 +23,8 @@ namespace FinancialSystem.Application
             // 3. Добавляем наш "перехватчик" (ValidationBehavior) в конвейер MediatR
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuditLoggingBehavior<,>));
+
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             return services;

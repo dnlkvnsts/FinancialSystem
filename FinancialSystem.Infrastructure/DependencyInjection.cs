@@ -23,6 +23,7 @@ namespace FinancialSystem.Infrastructure
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IAuditLogRepository, AuditLogRepository>();
             services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
             services.AddScoped<ApplicationDbContextInitializer>();
             // ==========================================

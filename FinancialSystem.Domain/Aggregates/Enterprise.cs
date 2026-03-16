@@ -13,7 +13,7 @@ namespace FinancialSystem.Domain.Aggregates
         public string Name { get; private set; }
         public string LegalAddress { get; private set; }
 
-        // ЗАМЕНИ Guid на int ТУТ
+        
         private readonly List<int> _employeeIds = new();
         public IReadOnlyCollection<int> EmployeeIds => _employeeIds.AsReadOnly();
 
@@ -23,7 +23,7 @@ namespace FinancialSystem.Domain.Aggregates
             LegalAddress = legalAddress;
         }
 
-        // И ТУТ ЗАМЕНИ Guid на int
+
         public void AddEmployee(int clientId)
         {
             if (!_employeeIds.Contains(clientId))
@@ -32,6 +32,15 @@ namespace FinancialSystem.Domain.Aggregates
             }
         }
 
-      
+        public void RemoveEmployee(int clientId)
+        {
+            // Если клиент есть в списке, удаляем его
+            if (_employeeIds.Contains(clientId))
+            {
+                _employeeIds.Remove(clientId);
+            }
+        }
+
+
     }
 }

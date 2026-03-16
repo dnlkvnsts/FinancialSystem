@@ -3,9 +3,11 @@ using FinancialSystem.Application.Features.Accounts.Commands.AccrueInterest;
 using FinancialSystem.Application.Features.Accounts.Commands.CloseAccount;
 using FinancialSystem.Application.Features.Accounts.Commands.OpenAccount;
 using FinancialSystem.Application.Features.Accounts.Commands.TransferFunds;
+using FinancialSystem.Application.Features.Accounts.Commands.UpdateAccountLockStatus;
 using FinancialSystem.Application.Features.Accounts.Queries.GetAccountById;
 using FinancialSystem.Application.Features.Accounts.Queries.GetAccountHistory;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinancialSystem.Api.Controllers
@@ -51,6 +53,8 @@ namespace FinancialSystem.Api.Controllers
            
         }
 
+
+        [Authorize(Roles = "Manager")]
         [HttpGet("{id}/history")]
         public async Task<ActionResult<List<TransactionDto>>> GetHistory(int id)
         {
@@ -61,10 +65,21 @@ namespace FinancialSystem.Api.Controllers
         [HttpPost("{id}/accrue-interest")]
         public async Task<IActionResult> AccrueInterest(int id)
         {
-            // Мы передаем ID из URL в нашу команду
+            
             await _mediator.Send(new AccrueInterestCommand(id));
-
             return Ok(new { message = "Проценты успешно начислены на вклад" });
+        }
+
+
+        [Authorize(Roles = "Manager")]
+        [HttpPut("accounts/{id}/lock-status")]
+        public async Task<ActionResult> UpdateLockStatus(int id, [FromBody] bool shouldBlock)
+        {
+            
+            await _mediator.Send(new UpdateAccountLockStatusCommand(id, shouldBlock));
+
+            var action = shouldBlock ? "заблокирован" : "разблокирован";
+            return Ok(new { Message = $"Счет {id} успешно {action}" });
         }
 
 

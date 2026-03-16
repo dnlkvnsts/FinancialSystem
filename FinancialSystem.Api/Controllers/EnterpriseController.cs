@@ -1,10 +1,13 @@
 ﻿using FinancialSystem.Application.DTOs;
+using FinancialSystem.Application.Features.Enterprises.Commands.AddEmployee;
 using FinancialSystem.Application.Features.Enterprises.Commands.CreatePayrollRequest;
 using FinancialSystem.Application.Features.Enterprises.Commands.ReceiveSalary;
+using FinancialSystem.Application.Features.Enterprises.Commands.RemoveEmployee;
 using FinancialSystem.Application.Features.Enterprises.Commands.UpdatePayrollRequestStatus;
 using FinancialSystem.Application.Features.Enterprises.Queries;
 using FinancialSystem.Application.Features.Enterprises.Queries.GetEnterprises;
 using FinancialSystem.Application.Features.Enterprises.Queries.GetEnterprisesWithEmployee;
+using FinancialSystem.Application.Features.Enterprises.Queries.GetPayrollRequest;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -93,6 +96,39 @@ namespace FinancialSystem.Api.Controllers
         {
             var query = new GetEnterprisesWithEmployeesQuery();
             var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+
+        [Authorize(Roles = "Manager")]
+        [HttpPost("{enterpriseId}/add-employee/{clientId}")]
+        public async Task<ActionResult> AddEmployee(int enterpriseId, int clientId)
+        {
+            
+                await _mediator.Send(new AddEmployeeToEnterpriseCommand(enterpriseId, clientId));
+                return Ok(new { Message = "Сотрудник успешно добавлен" });
+           
+           
+        }
+
+        [Authorize(Roles = "Manager")]
+        [HttpDelete("{enterpriseId}/remove-employee/{clientId}")]
+        public async Task<ActionResult> RemoveEmployee(int enterpriseId, int clientId)
+        {
+            
+                await _mediator.Send(new RemoveEmployeeFromEnterpriseCommand(enterpriseId, clientId));
+                return Ok(new { Message = "Сотрудник успешно удален из предприятия" });
+            
+        }
+
+
+
+
+        [Authorize(Roles = "Manager")]
+        [HttpGet("all-payroll-requests")]
+        public async Task<ActionResult<List<PayrollRequestDto>>> GetAllPayrollRequests()
+        {
+            var result = await _mediator.Send(new GetAllPayrollRequestsQuery());
             return Ok(result);
         }
 

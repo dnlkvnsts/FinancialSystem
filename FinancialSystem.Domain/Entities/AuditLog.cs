@@ -11,9 +11,11 @@ namespace FinancialSystem.Domain.Entities
     {
         public int UserId { get; set; }
 
-        public string Action {  get; set; }
+        public string Action { get; set; }
 
         public string Details { get; set; }
 
+        // ДОБАВЬ ЭТО:
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
