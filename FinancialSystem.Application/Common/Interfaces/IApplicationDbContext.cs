@@ -21,6 +21,8 @@ namespace FinancialSystem.Application.Common.Interfaces
 
         DbSet<Enterprise> Enterprises { get; }
 
+        public DbSet<PayrollRequest> PayrollRequests { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

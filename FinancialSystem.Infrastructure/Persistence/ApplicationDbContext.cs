@@ -29,7 +29,7 @@ namespace FinancialSystem.Infrastructure.Persistence
         public DbSet<Enterprise> Enterprises  => Set<Enterprise>();
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
-       
+       public DbSet<PayrollRequest>  PayrollRequests => Set<PayrollRequest>();
 
         // РЕАЛИЗАЦИЯ IUnitOfWork (Управление транзакциями)
         public async Task BeginTransactionAsync()
