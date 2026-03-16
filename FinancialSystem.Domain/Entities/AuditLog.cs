@@ -17,5 +17,7 @@ namespace FinancialSystem.Domain.Entities
 
         // ДОБАВЬ ЭТО:
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public bool IsReverted { get; set; } = false;
     }
 }

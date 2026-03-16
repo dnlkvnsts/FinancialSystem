@@ -1,4 +1,5 @@
 ﻿using FinancialSystem.Application.DTOs;
+using FinancialSystem.Application.Features.Admin.Commands.UndoAction;
 using FinancialSystem.Application.Features.Admin.Queries.GetAuditLogs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +25,17 @@ namespace FinancialSystem.Api.Controllers
         {
             var logs = await _mediator.Send(new GetAuditLogsQuery());
             return Ok(logs);
+        }
+
+
+
+        [HttpPost("undo/{logId}")]
+        public async Task<ActionResult> Undo(int logId)
+        {
+            // Вместо { LogId = logId } пишем просто (logId) в круглых скобках
+            await _mediator.Send(new UndoActionCommand(logId));
+
+            return Ok(new { message = "Успешно" });
         }
     }
 }
