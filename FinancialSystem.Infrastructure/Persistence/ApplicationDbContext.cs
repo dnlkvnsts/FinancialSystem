@@ -2,12 +2,14 @@
 using FinancialSystem.Domain.Aggregates;
 using FinancialSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace FinancialSystem.Infrastructure.Persistence
@@ -86,10 +88,9 @@ namespace FinancialSystem.Infrastructure.Persistence
         {
             base.OnModelCreating(builder);
 
-            // 1. Настройка для Transaction (исправляет твою ошибку)
+            // 1. Настройка для Transaction
             builder.Entity<Transaction>(entity =>
             {
-                // Указываем, что Amount — это часть таблицы Transaction
                 entity.OwnsOne(t => t.Amount, money =>
                 {
                     money.Property(m => m.Amount).HasColumnName("Amount").HasPrecision(18, 2);
@@ -97,7 +98,7 @@ namespace FinancialSystem.Infrastructure.Persistence
                 });
             });
 
-            // 2. Настройка для Account (так как там тоже есть Money)
+            // 2. Настройка для Account
             builder.Entity<Account>(entity =>
             {
                 entity.OwnsOne(a => a.Balance, money =>
@@ -107,7 +108,32 @@ namespace FinancialSystem.Infrastructure.Persistence
                 });
             });
 
-            // Оставляем эту строку на случай, если в будущем захочешь использовать файлы
+            // --- НОВАЯ НАСТРОЙКА ДЛЯ ENTERPRISE (КОЛОНКА С ПОЛЬЗОВАТЕЛЯМИ) ---
+            builder.Entity<Enterprise>(entity =>
+            {
+                entity.Property(e => e.EmployeeIds)
+                    .HasField("_employeeIds")
+                    .UsePropertyAccessMode(PropertyAccessMode.Field)
+                    .HasConversion(
+                        // При сохранении: если списка нет, сохраняем "[]"
+                        v => JsonSerializer.Serialize(v ?? new List<int>(), (JsonSerializerOptions)null),
+
+                        // При чтении: ПРОВЕРЯЕМ НА ПУСТОТУ перед тем как десериализовать
+                        v => string.IsNullOrEmpty(v)
+                            ? new List<int>()
+                            : JsonSerializer.Deserialize<List<int>>(v, (JsonSerializerOptions)null) ?? new List<int>()
+                    );
+
+                // Оставляем компаратор без изменений
+                var comparer = new ValueComparer<IReadOnlyCollection<int>>(
+                    (c1, c2) => c1.SequenceEqual(c2),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.ToList());
+
+                entity.Property(e => e.EmployeeIds).Metadata.SetValueComparer(comparer);
+            });
+            // ----------------------------------------------------------------
+
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

@@ -29,7 +29,19 @@ namespace FinancialSystem.Application.Features.Enterprises.Commands.ReceiveSalar
             if (payrollRequest.ClientId != request.ClientId)
                 throw new Exception("У вас нет прав на получение средств по этой заявке.");
 
-            // 3. ИЩЕМ СЧЕТ КЛИЕНТА (чтобы изменить баланс)
+            // --- НОВАЯ ЛОГИКА: ПРИСОЕДИНЕНИЕ К ПРЕДПРИЯТИЮ ---
+            // 3. Загружаем предприятие, к которому относится эта заявка
+            var enterprise = await _context.Enterprises
+                .FirstOrDefaultAsync(e => e.Id == payrollRequest.EnterpriseId, cancellationToken);
+
+            if (enterprise != null)
+            {
+                // Добавляем ID клиента в список сотрудников предприятия
+                enterprise.AddEmployee(payrollRequest.ClientId);
+            }
+            // ------------------------------------------------
+
+            // 4. ИЩЕМ СЧЕТ КЛИЕНТА (чтобы изменить баланс)
             var targetAccount = await _context.Accounts
                 .FirstOrDefaultAsync(a => a.Number == request.AccountNumber
                                        && a.BankId == request.BankId, cancellationToken);
@@ -37,14 +49,17 @@ namespace FinancialSystem.Application.Features.Enterprises.Commands.ReceiveSalar
             if (targetAccount == null)
                 throw new Exception("Указанный счет не найден в этом банке.");
 
-            // 4. ЗАЧИСЛЯЕМ ДЕНЬГИ (используем Amount из запроса и валюту из счета)
+            // 5. ЗАЧИСЛЯЕМ ДЕНЬГИ
             var moneyToDeposit = new Money(targetAccount.Balance.Currency, request.Amount);
             targetAccount.Deposit(moneyToDeposit);
 
-            // 5. Вызываем твой метод для обновления статуса заявки
+            // 6. Обновляем статус заявки
             payrollRequest.MarkAsReceived(request.BankId, request.AccountNumber);
 
-            // 6. Сохраняем изменения (и баланс счета, и статус заявки сохранятся одновременно)
+            // 7. Сохраняем ВСЁ одновременно:
+            // - Измененный баланс счета (targetAccount)
+            // - Новый статус заявки (payrollRequest)
+            // - Обновленный список сотрудников предприятия (enterprise)
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;

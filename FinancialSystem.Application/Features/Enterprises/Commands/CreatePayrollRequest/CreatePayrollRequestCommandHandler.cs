@@ -22,16 +22,17 @@ namespace FinancialSystem.Application.Features.Enterprises.Commands.CreatePayrol
 
         public async Task<int> Handle(CreatePayrollRequestCommand request, CancellationToken cancellationToken)
         {
-            // 1. Проверяем, существует ли предприятие
-            var enterpriseExists = await _context.Enterprises
-                .AnyAsync(e => e.Id == request.EnterpriseId, cancellationToken);
+            // 1. Загружаем объект предприятия (а не просто проверяем AnyAsync)
+            // Это нужно, чтобы EF Core начал отслеживать изменения в этом объекте
+            var enterprise = await _context.Enterprises
+                .FirstOrDefaultAsync(e => e.Id == request.EnterpriseId, cancellationToken);
 
-            if (!enterpriseExists)
+            if (enterprise == null)
             {
-                throw new Exception($"Предприятие с ID {request.EnterpriseId} не найдено."); // Можно заменить на кастомный NotFoundException
+                throw new Exception($"Предприятие с ID {request.EnterpriseId} не найдено.");
             }
 
-            // 2. Проверяем, нет ли уже ожидающей или одобренной заявки (бизнес-правило)
+            // 2. Проверяем, нет ли уже ожидающей или одобренной заявки
             var existingRequest = await _context.PayrollRequests
                 .AnyAsync(pr => pr.ClientId == request.ClientId
                              && pr.EnterpriseId == request.EnterpriseId
@@ -42,10 +43,16 @@ namespace FinancialSystem.Application.Features.Enterprises.Commands.CreatePayrol
                 throw new Exception("Заявка на зарплатный проект в это предприятие уже существует или одобрена.");
             }
 
-            // 3. Создаем сущность
+            // --- ЛОГИКА ПРИСОЕДИНЕНИЯ ---
+            // 3. Добавляем клиента в список сотрудников предприятия
+            enterprise.AddEmployee(request.ClientId);
+
+            // 4. Создаем сущность заявки
             var entity = new PayrollRequest(request.ClientId, request.EnterpriseId);
 
-            // 4. Сохраняем в БД
+            // 5. Сохраняем всё в БД
+            // EF Core увидит, что мы изменили enterprise и добавили новую заявку,
+            // и выполнит оба действия в одной транзакции.
             _context.PayrollRequests.Add(entity);
             await _context.SaveChangesAsync(cancellationToken);
 

@@ -4,6 +4,7 @@ using FinancialSystem.Application.Features.Enterprises.Commands.ReceiveSalary;
 using FinancialSystem.Application.Features.Enterprises.Commands.UpdatePayrollRequestStatus;
 using FinancialSystem.Application.Features.Enterprises.Queries;
 using FinancialSystem.Application.Features.Enterprises.Queries.GetEnterprises;
+using FinancialSystem.Application.Features.Enterprises.Queries.GetEnterprisesWithEmployee;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -83,6 +84,16 @@ namespace FinancialSystem.Api.Controllers
             await _mediator.Send(command);
 
             return Ok($"Средства в размере {dto.Amount} успешно перечислены на счет {dto.AccountNumber}.");
+        }
+
+
+        [Authorize(Roles = "Manager")] 
+        [HttpGet("with-employees")]
+        public async Task<ActionResult<List<EnterpriseWithEmployeesDto>>> GetWithEmployees()
+        {
+            var query = new GetEnterprisesWithEmployeesQuery();
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
     }
